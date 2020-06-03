@@ -1,0 +1,62 @@
+# Coverage Analysis Tool - Build Pipeline
+
+trigger:
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - CoverageAnalysis/*
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: 'CoverageAnalysis/CoverageAnalysis.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+
+jobs:
+# Build and publish artifact when code is pushed on master branch.
+- job: build_master
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  steps:
+  - task: NuGetToolInstaller@1
+  - task: NuGetCommand@2
+    inputs:
+      restoreSolution: '$(solution)'
+  - task: VSBuild@1
+    inputs:
+      solution: '$(solution)'
+      platform: '$(buildPlatform)'
+      configuration: '$(buildConfiguration)'
+  - task: VSTest@2
+    inputs:
+      platform: '$(buildPlatform)'
+      configuration: '$(buildConfiguration)'
+  - task: CopyFiles@2
+    inputs:
+      Contents: 'CoverageAnalysis/bin/**'
+      TargetFolder: '$(Build.ArtifactStagingDirectory)'
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'test-coverage-analysis-tool'
+      publishLocation: 'Container'
+# Ensure code is compiling correctly. Used by build policy.
+- job: build_other
+  condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
+  steps:
+  - task: NuGetToolInstaller@1
+  - task: NuGetCommand@2
+    inputs:
+      restoreSolution: '$(solution)'
+  - task: VSBuild@1
+    inputs:
+      solution: '$(solution)'
+      platform: '$(buildPlatform)'
+      configuration: '$(buildConfiguration)'
+  - task: VSTest@2
+    inputs:
+      platform: '$(buildPlatform)'
+      configuration: '$(buildConfiguration)'
