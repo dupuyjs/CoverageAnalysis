@@ -82,8 +82,8 @@ namespace CoverageAnalysis
             var classSymbol = compilation.GetSemanticModel(tree).GetDeclaredSymbol(classDeclaration);
             var references = SymbolFinder.FindReferencesAsync(classSymbol, solution).Result;
 
-            var methodTargetRules = Settings.Rules.Targets.Single(t => t.SyntaxType == SyntaxType.MethodDeclaration);
-            var classTargetRules = Settings.Rules.Targets.Single(t => t.SyntaxType == SyntaxType.ClassDeclaration);
+            var methodTargetRules = Settings.Rules.Targets.SingleOrDefault(t => t.SyntaxType == SyntaxType.MethodDeclaration);
+            var classTargetRules = Settings.Rules.Targets.SingleOrDefault(t => t.SyntaxType == SyntaxType.ClassDeclaration);
             
             foreach (ReferencedSymbol reference in references)
             {
