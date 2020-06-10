@@ -25,7 +25,7 @@ Copyright (C) 2020 CoverageAnalysis
 ### Sample
 
 ```cmd
-> .\CoverageAnalysis.exe -s -s C:\<...>\NewSolution\NewSolution.sln -a Main.CQS Import.CQS Export.CQS
+> .\CoverageAnalysis.exe -s C:\<...>\NewSolution\NewSolution.sln -a Main.CQS Import.CQS Export.CQS
 ```
 
 ### Current Rules
