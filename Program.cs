@@ -1,4 +1,5 @@
 using CommandLine;
+using CoverageAnalysis.Rules;
 using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis.MSBuild;
 using System;
@@ -11,9 +12,11 @@ namespace CoverageAnalysis
     class Program
     {
         static int Main(string[] args)
-        {
+        { 
             ExitCode exitCode = ExitCode.Success;
             Task<ExitCode> mainTask = null;
+
+            Settings.Init();
 
             Parser.Default.ParseArguments<Options>(args)
                 .WithParsed<Options>(o =>
