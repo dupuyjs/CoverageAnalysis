@@ -1,0 +1,51 @@
+# sample integration:
+# - template: service-coverage.yml
+#   parameters:
+#     vmImageName: windows-latest
+
+parameters:
+- name: vmImageName
+
+stages:
+- stage: CI_Service_Coverage_Job
+  displayName: Service Unit Test Coverage
+  dependsOn: Build 
+  pool:
+      vmImage: ${{ parameters.vmImageName }}
+
+  jobs:
+  - job: CI_Service_Coverage_Job
+    displayName: Service Test Coverage
+    workspace:
+      clean: all
+    variables:
+      buildPlatform: 'Any CPU'
+      solution: '$(Build.SourcesDirectory)/Source/Solution/Solution.sln'
+      workingDirectory: '$(System.ArtifactsDirectory)/test-coverage-analysis-tool/CoverageAnalysis/bin/Release/net472'
+      assemblies: 'Main.CQS Import.CQS Export.CQS'
+      outputFile: 'coverage-unit-test-result.txt'
+
+    steps:
+    - task: DownloadBuildArtifacts@0
+      inputs:
+        buildType: 'specific'
+        project: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
+        pipeline: 'xxxx'
+        buildVersionToDownload: 'latest'
+        downloadType: 'single'
+        artifactName: 'test-coverage-analysis-tool'
+        downloadPath: '$(System.ArtifactsDirectory)'
+
+    - task: CmdLine@2
+      inputs:
+        workingDirectory: '$(workingDirectory)'
+        script: |
+            md $(Build.ArtifactStagingDirectory)\result
+            CoverageAnalysis.exe -s $(solution) -a $(assemblies) > $(Build.ArtifactStagingDirectory)/result/$(outputFile)
+            EXIT /B 0
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/result'
+        ArtifactName: 'coverage-test-result'
+        publishLocation: 'Container'

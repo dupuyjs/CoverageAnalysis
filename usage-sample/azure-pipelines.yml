@@ -1,0 +1,22 @@
+trigger:
+  batch: true
+  branches:
+    include:
+      - dev
+      
+resources:
+- repo: self
+
+variables:  
+  clientVmImage: windows-latest
+
+stages:
+# preceding stages
+# e.g. building the service
+
+- template: templates/service-coverage.yml
+  parameters:
+    vmImageName: $(clientVmImage)
+
+# successive stages
+# e.g. building the client
