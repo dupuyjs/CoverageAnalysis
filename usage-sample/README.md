@@ -1,11 +1,11 @@
 # Usage Sample for Coverage Analysis Tool
 
 In our project we have integrated the tool into an Azure DevOps pipeline as a separate [stage](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/stages?view=azure-devops&tabs=yaml).
-This integration is included here as sample. Additionally we have added the integration as GitHub Action as sample.
+This integration is included here as sample.
 
 ## Integration with Azure Pipelines
 
-There are two files:
+There are two files for integration where the tool should run:
 
 1) `azure-pipelines.yml`:
     * This is the default name of most pipelines in the root directory of the repository. 
@@ -14,4 +14,4 @@ There are two files:
     * This file runs the coverage analysis tool on the specified source code.
     * The tool parameters are described in the main [readme.md](./readme.md).
 
-## Integration with GitHub Actions
+There is one file [`azure-pipelines-test-coverage.yml`](.\azure-pipelines-test-coverage.yml) in the root of the coverage tool itself which builds the tool and publishes it as artifact.
